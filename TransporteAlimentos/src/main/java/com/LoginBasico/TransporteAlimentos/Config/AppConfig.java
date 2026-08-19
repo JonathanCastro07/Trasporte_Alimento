@@ -13,8 +13,8 @@ public class AppConfig {
         FilterRegistrationBean<AutenticacionFilter> registrationBean = new FilterRegistrationBean<>();
 
         registrationBean.setFilter(autenticacionFilter);
-        registrationBean.addUrlPatterns("/api/*"); // se aplica a todos los endpoints que empiecen con /api/
-        registrationBean.setOrder(1); // se ejecuta primero, antes de llegar al controller
+        registrationBean.addUrlPatterns("/api/*");
+        registrationBean.setOrder(1);
 
         return registrationBean;
     }

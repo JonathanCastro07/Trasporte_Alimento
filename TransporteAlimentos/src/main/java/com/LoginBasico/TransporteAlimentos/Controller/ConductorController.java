@@ -27,7 +27,6 @@ public class ConductorController {
         return (Usuario) request.getAttribute("usuarioAutenticado");
     }
 
-    // Solo el ADMINISTRADOR puede registrar conductores
     @PostMapping
     public ResponseEntity<?> crear(@Valid @RequestBody Conductor conductor, HttpServletRequest request) {
         Usuario usuario = getUsuarioAutenticado(request);
@@ -41,7 +40,6 @@ public class ConductorController {
         return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
     }
 
-    // Ambos roles pueden ver la lista (el supervisor la necesita para asociar)
     @GetMapping
     public ResponseEntity<List<Conductor>> listar() {
         return ResponseEntity.ok(conductorRepository.findAll());

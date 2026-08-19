@@ -22,7 +22,6 @@ public class UsuarioController {
         return (Usuario) request.getAttribute("usuarioAutenticado");
     }
 
-    // Solo el ADMINISTRADOR puede registrar usuarios nuevos
     @PostMapping
     public ResponseEntity<?> registrar(@Valid @RequestBody Usuario usuario, HttpServletRequest request) {
         Usuario usuarioAutenticado = getUsuarioAutenticado(request);

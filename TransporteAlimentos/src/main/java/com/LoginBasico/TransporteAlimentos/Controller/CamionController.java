@@ -28,7 +28,7 @@ public class CamionController {
         return (Usuario) request.getAttribute("usuarioAutenticado");
     }
 
-    // Solo el ADMINISTRADOR puede registrar camiones
+
     @PostMapping
     public ResponseEntity<?> crear(@Valid @RequestBody Camion camion, HttpServletRequest request) {
         Usuario usuario = getUsuarioAutenticado(request);
@@ -42,7 +42,7 @@ public class CamionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
     }
 
-    // Ambos roles pueden ver la lista de camiones
+
     @GetMapping
     public ResponseEntity<List<Camion>> listar() {
         return ResponseEntity.ok(camionRepository.findAll());
@@ -55,7 +55,6 @@ public class CamionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Solo el SUPERVISOR puede asociar un conductor a un camion
     @PutMapping("/{camionId}/conductor/{conductorId}")
     public ResponseEntity<?> asociarConductor(@PathVariable Long camionId,
                                               @PathVariable Long conductorId,
