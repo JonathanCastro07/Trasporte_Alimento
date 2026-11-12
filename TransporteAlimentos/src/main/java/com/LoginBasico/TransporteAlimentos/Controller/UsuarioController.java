@@ -2,11 +2,12 @@ package com.LoginBasico.TransporteAlimentos.Controller;
 
 import com.LoginBasico.TransporteAlimentos.Modelo.Rol;
 import com.LoginBasico.TransporteAlimentos.Modelo.Usuario;
+import com.LoginBasico.TransporteAlimentos.Security.CustomUserDetails;
 import com.LoginBasico.TransporteAlimentos.Service.UsuarioService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,13 +23,15 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
-    private Usuario getUsuarioAutenticado(HttpServletRequest request) {
-        return (Usuario) request.getAttribute("usuarioAutenticado");
+    private Usuario getUsuarioAutenticado() {
+        CustomUserDetails userDetails = (CustomUserDetails)
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userDetails.getUsuario();
     }
 
     @PostMapping
-    public ResponseEntity<?> registrar(@Valid @RequestBody Usuario usuario, HttpServletRequest request) {
-        Usuario usuarioAutenticado = getUsuarioAutenticado(request);
+    public ResponseEntity<?> registrar(@Valid @RequestBody Usuario usuario) {
+        Usuario usuarioAutenticado = getUsuarioAutenticado();
 
         if (usuarioAutenticado.getRol() != Rol.ADMINISTRADOR) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)

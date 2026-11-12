@@ -5,10 +5,11 @@ import com.LoginBasico.TransporteAlimentos.Modelo.Conductor;
 import com.LoginBasico.TransporteAlimentos.Modelo.Rol;
 import com.LoginBasico.TransporteAlimentos.Modelo.Usuario;
 import com.LoginBasico.TransporteAlimentos.Repository.ConductorRepository;
-import jakarta.servlet.http.HttpServletRequest;
+import com.LoginBasico.TransporteAlimentos.Security.CustomUserDetails;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,13 +24,15 @@ public class ConductorController {
         this.conductorRepository = conductorRepository;
     }
 
-    private Usuario getUsuarioAutenticado(HttpServletRequest request) {
-        return (Usuario) request.getAttribute("usuarioAutenticado");
-    }
+    private Usuario getUsuarioAutenticado() {
+    CustomUserDetails userDetails = (CustomUserDetails)
+            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    return userDetails.getUsuario();
+}
 
     @PostMapping
-    public ResponseEntity<?> crear(@Valid @RequestBody Conductor conductor, HttpServletRequest request) {
-        Usuario usuario = getUsuarioAutenticado(request);
+    public ResponseEntity<?> crear(@Valid @RequestBody Conductor conductor) {
+        Usuario usuario = getUsuarioAutenticado();
 
         if (usuario.getRol() != Rol.ADMINISTRADOR) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)

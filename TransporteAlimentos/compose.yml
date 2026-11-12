@@ -1,0 +1,40 @@
+services:
+  mysql-transporte:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: GestroContable
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - mysql-transporte:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  transporte-alimentos:
+    build: .
+    image: ecommerce/transporte-alimentos:1.0
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: "jdbc:mysql://mysql-transporte:3306/GestroContable?allowPublicKeyRetrieval=true&useSSL=false"
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=75
+    depends_on:
+      mysql-transporte:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    restart: on-failure
+
+volumes:
+  mysql-transporte:
